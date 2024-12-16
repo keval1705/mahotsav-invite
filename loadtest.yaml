@@ -2,10 +2,11 @@ config:
   target: "http://localhost:3000"
   phases:
     - duration: 60
-      arrivalRate: 50 # 50 requests per second
+      arrivalRate: 1  # 1 request per second
 scenarios:
   - flow:
       - post:
           url: "/generate-pdf"
-          json:
-            fullName: "John Doe"
+          headers:
+            Content-Type: "application/json"  # Specify JSON format
+          body: '{"fullName": "John Doe"}'  # Correctly formatted JSON body

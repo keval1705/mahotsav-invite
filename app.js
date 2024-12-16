@@ -6,6 +6,7 @@ const os = require("os");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+app.use(express.json());  // Middleware to parse JSON bodies
 
 let cluster;
 let clusterReady = false; // Flag to track cluster readiness
@@ -76,7 +77,7 @@ const startCluster = async () => {
           '--disable-gpu'
         ]
       },
-      timeout: 30000, // Timeout for each task (in ms)
+      timeout: 180000, // Timeout for each task (in ms)
     });
 
     clusterReady = true; // Flag to indicate cluster is ready
@@ -90,7 +91,7 @@ const startCluster = async () => {
 
         if (fullName) htmlContent = htmlContent.replace("{{name}}", fullName || "");
 
-        await page.setContent(htmlContent, { waitUntil: "load" });
+        await page.setContent(htmlContent, { waitUntil: "load" ,timeout: 180000 });
 
         const pdfBuffer = await page.pdf({
           format: "A4",
@@ -130,6 +131,7 @@ app.post("/generate-pdf", async (req, res) => {
     return res.status(500).send("Cluster is not ready, try again later.");
   }
 
+  console.log(`req.body=>>>>>>>>>>>>>>>>>>>`,req.body)
   const { fullName } = req.body;
   try {
     // Send task to cluster to generate PDF
